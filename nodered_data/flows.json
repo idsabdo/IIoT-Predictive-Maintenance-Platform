@@ -1,0 +1,631 @@
+[
+    {
+        "id": "282354c6b8a9f8de",
+        "type": "tab",
+        "label": "OPC UA Pipeline",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "d21df89f1c00e58f",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "96f5b1af3598ac23",
+        "type": "tab",
+        "label": "Flow 2",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "6746f6864351f369",
+        "type": "tab",
+        "label": "Telegram Alerts.",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "355411cec4f92c2a",
+        "type": "mqtt-broker",
+        "name": "mosquitto",
+        "broker": "mosquitto",
+        "port": 1883,
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": 4,
+        "keepalive": 60,
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "1",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "f5b5bdab72465581",
+        "type": "OpcUa-Endpoint",
+        "name": "OPC UA Server",
+        "endpoint": "opc.tcp://simulator:4840",
+        "secpol": "None",
+        "secmode": "None",
+        "none": true,
+        "login": false,
+        "usercert": false,
+        "usercertificate": "",
+        "userprivatekey": ""
+    },
+    {
+        "id": "2c574cedd8d8b302",
+        "type": "influxdb",
+        "hostname": "127.0.0.1",
+        "port": 8086,
+        "protocol": "http",
+        "database": "database",
+        "name": "write to influxdb",
+        "usetls": false,
+        "tls": "",
+        "influxdbVersion": "2.0",
+        "url": "http://influxdb:8086",
+        "timeout": "20",
+        "rejectUnauthorized": false
+    },
+    {
+        "id": "b54f959374a5bae7",
+        "type": "OpcUa-Endpoint",
+        "name": "opc ua",
+        "endpoint": "opc.tcp://localhost:4840",
+        "secpol": "None",
+        "secmode": "None",
+        "none": true,
+        "login": false,
+        "usercert": false,
+        "usercertificate": "",
+        "userprivatekey": ""
+    },
+    {
+        "id": "6ffa2e855fd403ed",
+        "type": "telegram bot",
+        "botname": "Pump01 Alert Bot",
+        "usernames": "",
+        "chatids": "",
+        "baseapiurl": "",
+        "testenvironment": false,
+        "updatemode": "polling",
+        "pollinterval": 300,
+        "usesocks": false,
+        "sockshost": "",
+        "socksprotocol": "socks5",
+        "socksport": 6667,
+        "socksusername": "anonymous",
+        "sockspassword": "",
+        "bothost": "",
+        "botpath": "",
+        "localbothost": "0.0.0.0",
+        "localbotport": 8443,
+        "publicbotport": 8443,
+        "privatekey": "",
+        "certificate": "",
+        "useselfsignedcertificate": false,
+        "sslterminated": false,
+        "verboselogging": false
+    },
+    {
+        "id": "af5aee50f23dd26b",
+        "type": "OpcUa-Item",
+        "z": "282354c6b8a9f8de",
+        "item": "ns=2;s=Pump-01.Temperature",
+        "datatype": "Float",
+        "value": "",
+        "name": "Temperature",
+        "x": 330,
+        "y": 200,
+        "wires": [
+            [
+                "b616e73711f73a6e"
+            ]
+        ]
+    },
+    {
+        "id": "61d37c60cfb1c0dd",
+        "type": "OpcUa-Item",
+        "z": "282354c6b8a9f8de",
+        "item": "ns=2;s=Pump-01.Vibration",
+        "datatype": "Float",
+        "value": "",
+        "name": "Vibration",
+        "x": 340,
+        "y": 320,
+        "wires": [
+            [
+                "b616e73711f73a6e"
+            ]
+        ]
+    },
+    {
+        "id": "e4d5ddea31240fa8",
+        "type": "OpcUa-Item",
+        "z": "282354c6b8a9f8de",
+        "item": "ns=2;s=Pump-01.Current",
+        "datatype": "Float",
+        "value": "",
+        "name": "Current",
+        "x": 340,
+        "y": 380,
+        "wires": [
+            [
+                "b616e73711f73a6e"
+            ]
+        ]
+    },
+    {
+        "id": "be54ed1a12ccfe9c",
+        "type": "OpcUa-Item",
+        "z": "282354c6b8a9f8de",
+        "item": "ns=2;s=Pump-01.Mode",
+        "datatype": "String",
+        "value": "",
+        "name": "Mode",
+        "x": 330,
+        "y": 260,
+        "wires": [
+            [
+                "b616e73711f73a6e"
+            ]
+        ]
+    },
+    {
+        "id": "e0b8aec9b8a2f5c1",
+        "type": "function",
+        "z": "282354c6b8a9f8de",
+        "name": "Aggregate Sensors",
+        "func": "// Retrieve the current machine state from context\nlet state = context.get(\"state\") || {};\n\n// Get the parameter name (Temperature, Current, etc.)\nconst parameter = msg.browseName;\n\nif (!parameter) {\n    return null;\n}\n\n// Save the latest value\nstate[parameter.toLowerCase()] = msg.payload;\n\n// Save updated state\ncontext.set(\"state\", state);\n\n// Publish only when all measurements are available\nif (\n    state.temperature !== undefined &&\n    state.vibration !== undefined &&\n    state.current !== undefined &&\n    state.mode !== undefined\n) {\n\n    let out = {};\n\n    out.topic = \"factory/pump01/state\";\n\n    out.payload = {\n        asset: \"Pump-01\",\n        timestamp: new Date().toISOString(),\n        measurements: {\n            temperature: state.temperature,\n            vibration: state.vibration,\n            current: state.current,\n            mode: state.mode\n        }\n    };\n\n    return out;\n}\n\n// Wait until all four values are available\nreturn null;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 630,
+        "y": 120,
+        "wires": [
+            [
+                "97c835000e558747",
+                "bfa0df4ffa6da0a9"
+            ]
+        ]
+    },
+    {
+        "id": "bfa0df4ffa6da0a9",
+        "type": "mqtt out",
+        "z": "282354c6b8a9f8de",
+        "name": "publish to mosquitto",
+        "topic": "",
+        "qos": "1",
+        "retain": "false",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "355411cec4f92c2a",
+        "x": 860,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "b616e73711f73a6e",
+        "type": "OpcUa-Client",
+        "z": "282354c6b8a9f8de",
+        "endpoint": "f5b5bdab72465581",
+        "action": "read",
+        "deadbandtype": "a",
+        "deadbandvalue": 1,
+        "time": 10,
+        "timeUnit": "s",
+        "certificate": "n",
+        "localfile": "",
+        "localkeyfile": "",
+        "securitymode": "None",
+        "securitypolicy": "None",
+        "useTransport": false,
+        "maxChunkCount": 1,
+        "maxMessageSize": 8192,
+        "receiveBufferSize": 8192,
+        "sendBufferSize": 8192,
+        "setstatusandtime": false,
+        "keepsessionalive": false,
+        "name": "",
+        "applicationName": "",
+        "applicationUri": "",
+        "x": 520,
+        "y": 200,
+        "wires": [
+            [
+                "e0b8aec9b8a2f5c1"
+            ],
+            [],
+            []
+        ]
+    },
+    {
+        "id": "d05e063294e43d2d",
+        "type": "inject",
+        "z": "282354c6b8a9f8de",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "2",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 170,
+        "y": 80,
+        "wires": [
+            [
+                "af5aee50f23dd26b",
+                "be54ed1a12ccfe9c",
+                "61d37c60cfb1c0dd",
+                "e4d5ddea31240fa8"
+            ]
+        ]
+    },
+    {
+        "id": "97c835000e558747",
+        "type": "debug",
+        "z": "282354c6b8a9f8de",
+        "name": "debug 3",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 820,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "90c46d532221df5a",
+        "type": "influxdb out",
+        "z": "d21df89f1c00e58f",
+        "influxdb": "2c574cedd8d8b302",
+        "name": "Data to influxdb",
+        "measurement": "",
+        "precision": "",
+        "retentionPolicy": "",
+        "database": "database",
+        "precisionV18FluxV20": "ms",
+        "retentionPolicyV18Flux": "",
+        "org": "iiot_org",
+        "bucket": "factory_data",
+        "x": 680,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "846c7e21eace2cbe",
+        "type": "function",
+        "z": "d21df89f1c00e58f",
+        "name": "original fn",
+        "func": "const data = msg.payload;\n\n// Validate structure\nif (!data || !data.measurements) {\n    node.warn(\"Invalid payload\");\n    return null;\n}\n\nconst m = data.measurements;\n\n// Measurement name\nmsg.measurement = \"pump_sensors\";\n\n// Payload for InfluxDB\nmsg.payload = {\n    tags: {\n        asset: data.asset\n    },\n    fields: {\n        temperature: Number(m.temperature),\n        vibration: Number(m.vibration),\n        current: Number(m.current),\n        mode: String(m.mode)\n    },\n    timestamp: new Date(data.timestamp)\n};\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 420,
+        "y": 100,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "dc5a6b60a2749af1",
+        "type": "debug",
+        "z": "d21df89f1c00e58f",
+        "name": "debug 1",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 660,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "e98f5a6b33aba1bf",
+        "type": "mqtt in",
+        "z": "d21df89f1c00e58f",
+        "name": "",
+        "topic": "factory/pump01/state",
+        "qos": "1",
+        "datatype": "auto-detect",
+        "broker": "355411cec4f92c2a",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 240,
+        "y": 200,
+        "wires": [
+            [
+                "65526299f439b222"
+            ]
+        ]
+    },
+    {
+        "id": "987c595aa5515a02",
+        "type": "function",
+        "z": "d21df89f1c00e58f",
+        "name": "function that worked",
+        "func": "msg.measurement = \"test\";\n\nmsg.payload = {\n    value: 123\n};\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 400,
+        "y": 140,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "65526299f439b222",
+        "type": "function",
+        "z": "d21df89f1c00e58f",
+        "name": "function 1",
+        "func": "const data = msg.payload;\n\nif (!data || !data.measurements) {\n    node.warn(\"Invalid payload — missing measurements\");\n    return null;\n}\n\nconst m = data.measurements;\n\nif (\n    m.temperature === undefined ||\n    m.vibration === undefined ||\n    m.current === undefined ||\n    m.mode === undefined\n) {\n    node.warn(\"Incomplete measurements\");\n    return null;\n}\n\n// Measurement name\nmsg.measurement = \"pump_sensors\";\n\n// [0] = fields\n// [1] = tags\nmsg.payload = [\n    {\n        temperature: Number(m.temperature),\n        vibration: Number(m.vibration),\n        current: Number(m.current),\n        mode: String(m.mode)\n    },\n    {\n        asset: String(data.asset)\n    }\n];\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 460,
+        "y": 220,
+        "wires": [
+            [
+                "90c46d532221df5a",
+                "dc5a6b60a2749af1"
+            ]
+        ]
+    },
+    {
+        "id": "a6faa78e00790959",
+        "type": "mqtt in",
+        "z": "96f5b1af3598ac23",
+        "name": "",
+        "topic": "factory/pump01/ml_diagnostics",
+        "qos": "1",
+        "datatype": "auto-detect",
+        "broker": "355411cec4f92c2a",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 430,
+        "y": 80,
+        "wires": [
+            [
+                "7b6f3a2bef5b8c64",
+                "94cfc6c302591abd"
+            ]
+        ]
+    },
+    {
+        "id": "7b6f3a2bef5b8c64",
+        "type": "debug",
+        "z": "96f5b1af3598ac23",
+        "name": "AI thoughts",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 710,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "45040f287b90dbd4",
+        "type": "influxdb out",
+        "z": "96f5b1af3598ac23",
+        "influxdb": "2c574cedd8d8b302",
+        "name": "ML",
+        "measurement": "",
+        "precision": "",
+        "retentionPolicy": "",
+        "database": "database",
+        "precisionV18FluxV20": "ms",
+        "retentionPolicyV18Flux": "",
+        "org": "iiot_org",
+        "bucket": "factory_data",
+        "x": 730,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "94cfc6c302591abd",
+        "type": "function",
+        "z": "96f5b1af3598ac23",
+        "name": "function 2",
+        "func": "// ─── ML Diagnostics → InfluxDB Writer ────────────────────────────────────────\n// Adapts the new ml_service output to InfluxDB line protocol via influxdb out node.\n// Writes both numeric fields (for charts) and string fields (for stat panels).\n\nconst data = msg.payload;\n\nif (!data || data.is_anomaly === undefined) {\n    node.warn(\"Invalid ML payload — missing is_anomaly field\");\n    return null;\n}\n\n// Safe nested value extractor\nconst get = (obj, path, fallback = null) => {\n    try {\n        const val = path.split('.').reduce((o, k) => o?.[k], obj);\n        return val !== undefined && val !== null ? val : fallback;\n    } catch { return fallback; }\n};\n\n// Numeric severity code for time series plotting and threshold coloring\n// 0 = NORMAL, 1 = WARNING, 2 = CRITICAL\nconst severityMap = { \"NORMAL\": 0, \"WARNING\": 1, \"CRITICAL\": 2 };\n\nconst diagStatus   = get(data, 'diagnosis.status', 'NO_DIAGNOSIS');\nconst hasDiagnosis = diagStatus === 'HYPOTHESIS_AVAILABLE';\n\nconst mostLikely  = hasDiagnosis ? get(data, 'diagnosis.most_likely', 'none') : 'none';\nconst confidence  = hasDiagnosis ? get(data, 'diagnosis.confidence', 'LOW')   : 'LOW';\n\nconst alt1 = (hasDiagnosis && data.diagnosis?.alternatives?.[0])\n    ? data.diagnosis.alternatives[0].fault : 'none';\nconst alt2 = (hasDiagnosis && data.diagnosis?.alternatives?.[1])\n    ? data.diagnosis.alternatives[1].fault : 'none';\n\nconst recMessage  = get(data, 'recommendation.message',  'No action required.');\nconst recAction   = get(data, 'recommendation.action',   'CONTINUE_MONITORING');\nconst recPriority = get(data, 'recommendation.priority', 'NONE');\n\nmsg.measurement = \"ml_diagnostics\";\n\nmsg.payload = [\n    // ── FIELDS (values stored in InfluxDB) ──────────────────────────────────\n    {\n        // Numeric fields — used for time series charts and threshold coloring\n        is_anomaly      : data.is_anomaly ? 1 : 0,\n        anomaly_score   : Number(data.anomaly_score ?? 0),\n        health_score    : Number(((1 - (data.anomaly_score ?? 0)) * 100).toFixed(1)),\n        severity_code   : Number(severityMap[data.severity] ?? 0),\n        z_score_deviation: Number(get(data, 'evidence.z_score_deviation', 0)),\n        z_temperature   : Number(get(data, 'evidence.z_scores.temperature', 0)),\n        z_vibration     : Number(get(data, 'evidence.z_scores.vibration',   0)),\n        z_current       : Number(get(data, 'evidence.z_scores.current',     0)),\n        support_score   : Number(hasDiagnosis ? get(data, 'diagnosis.support_score', 0) : 0),\n\n        // String fields — used for stat panels showing labels and text\n        severity        : String(data.severity ?? 'NORMAL'),\n        dominant_feature: String(get(data, 'evidence.dominant_feature', 'none')),\n        diagnosis       : String(mostLikely),\n        confidence      : String(confidence),\n        alternative_1   : String(alt1),\n        alternative_2   : String(alt2),\n        recommendation  : String(recMessage),\n        action          : String(recAction),\n        priority        : String(recPriority)\n    },\n    // ── TAGS (metadata for filtering) ───────────────────────────────────────\n    {\n        asset_id: String(data.asset_id ?? 'Pump-01')\n    }\n];\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 600,
+        "y": 180,
+        "wires": [
+            [
+                "45040f287b90dbd4"
+            ]
+        ]
+    },
+    {
+        "id": "bbef6536b63e3735",
+        "type": "mqtt in",
+        "z": "6746f6864351f369",
+        "name": "ML Diagnostics to Telegram",
+        "topic": "factory/pump01/ml_diagnostics",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "355411cec4f92c2a",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 240,
+        "y": 140,
+        "wires": [
+            [
+                "9a50c3fabedd9c7c"
+            ]
+        ]
+    },
+    {
+        "id": "9a50c3fabedd9c7c",
+        "type": "function",
+        "z": "6746f6864351f369",
+        "name": "function 3",
+        "func": "const data = msg.payload;\n\nif (!data) return null;\n\nconst lastSeverity = context.get('lastSeverity') || 'NORMAL';\nconst lastDiagnosis = context.get('lastDiagnosis') || 'none';\n\nconst currentSeverity = data.severity || 'NORMAL';\nconst currentDiagnosis = data.diagnosis?.most_likely || 'none';\n\n// Recovery alert (anomaly -> NORMAL)\nif (currentSeverity === 'NORMAL') {\n    if (lastSeverity !== 'NORMAL') {\n        context.set('lastSeverity', 'NORMAL');\n        context.set('lastDiagnosis', 'none');\n\n        const asset = data.asset_id || 'Pump-01';\n        const timestamp = new Date().toLocaleString('en-GB', {\n            timeZone: 'Africa/Casablanca'\n        });\n\n        msg.payload = {\n            chatId: global.get('telegramChatId'),\n            type: 'message',\n            content: `✅ *NORMAL — ${asset}*\\n\\nMachine has returned to normal operation.\\n_${timestamp}_`,\n            parseMode: 'Markdown'\n        };\n\n        return msg;\n    }\n\n    return null;\n}\n\n// Only alert on WARNING or CRITICAL\nif (!['WARNING', 'CRITICAL'].includes(currentSeverity)) {\n    return null;\n}\n\n// Send alert if severity changed OR diagnosis changed\nconst shouldAlert =\n    currentSeverity !== lastSeverity ||\n    (currentDiagnosis !== lastDiagnosis && currentDiagnosis !== 'none');\n\nif (!shouldAlert) return null;\n\ncontext.set('lastSeverity', currentSeverity);\ncontext.set('lastDiagnosis', currentDiagnosis);\n\nconst icon = currentSeverity === 'CRITICAL' ? '🔴' : '🟠';\nconst asset = data.asset_id || 'Pump-01';\nconst dominant = data.evidence?.dominant_feature || 'unknown';\nconst zScore = data.evidence?.z_score_deviation || 0;\nconst diagnosis = data.diagnosis?.most_likely || 'N/A';\nconst confidence = data.diagnosis?.confidence || 'N/A';\nconst recommendationMessage =\n    data.recommendation?.message || 'No recommendation available.';\nconst action = data.recommendation?.action || 'N/A';\nconst priority = data.recommendation?.priority || 'N/A';\n\nconst timestamp = new Date().toLocaleString('en-GB', {\n    timeZone: 'Africa/Casablanca'\n});\n\nconst text =\n`${icon} *${currentSeverity} ALERT — ${asset}*\n━━━━━━━━━━━━━━━━━━━━━━\n🕐 *Time:* ${timestamp}\n📡 *Dominant Sensor:* ${dominant.toUpperCase()} (${zScore}σ)\n\n🔬 *Fault Hypothesis:* ${diagnosis.replace(/_/g, ' ').toUpperCase()}\n📊 *Confidence:* ${confidence}\n\n📋 *Recommendation:*\n${recommendationMessage}\n\n⚡ *Action:* ${action.replace(/_/g, ' ')}\n🎯 *Priority:* ${priority}\n━━━━━━━━━━━━━━━━━━━━━━\n_Pump-01 | Compressor Station A_`;\n\nmsg.payload = {\n    chatId: global.get('telegramChatId'),\n    type: 'message',\n    content: text,\n    parseMode: 'Markdown'\n};\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 500,
+        "y": 160,
+        "wires": [
+            [
+                "97cdc7547fad2834"
+            ]
+        ]
+    },
+    {
+        "id": "97cdc7547fad2834",
+        "type": "telegram sender",
+        "z": "6746f6864351f369",
+        "name": "",
+        "bot": "6ffa2e855fd403ed",
+        "haserroroutput": false,
+        "outputs": 1,
+        "x": 710,
+        "y": 160,
+        "wires": [
+            [
+                "a39fc03520fc8cf5"
+            ]
+        ]
+    },
+    {
+        "id": "82082c7addc94542",
+        "type": "inject",
+        "z": "6746f6864351f369",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 90,
+        "y": 240,
+        "wires": [
+            [
+                "8d5d8a22f2ba04de"
+            ]
+        ]
+    },
+    {
+        "id": "8d5d8a22f2ba04de",
+        "type": "function",
+        "z": "6746f6864351f369",
+        "name": "function 4",
+        "func": "global.set('telegramChatId', '5374676018');\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 320,
+        "y": 240,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "a39fc03520fc8cf5",
+        "type": "debug",
+        "z": "6746f6864351f369",
+        "name": "Checking telegram mssgs",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 930,
+        "y": 160,
+        "wires": []
+    }
+]

@@ -1,0 +1,21 @@
+# Use the official Python 3.11 slim image as base
+# "slim" means minimal OS — smaller image, faster download
+FROM python:3.11-slim
+
+# Set the working directory inside the container
+# All subsequent commands run from here
+WORKDIR /app
+
+# Copy requirements first (before the code)
+# Why? Docker caches layers. If requirements.txt didn't change,
+# Docker reuses the cached pip install layer — faster rebuilds.
+COPY requirements.txt .
+
+# Install Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Now copy the simulator code
+COPY simulator.py .
+
+# The command that runs when the container starts
+CMD ["python", "simulator.py"]

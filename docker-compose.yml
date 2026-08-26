@@ -1,0 +1,110 @@
+networks:
+  iiot_network:
+    driver: bridge
+
+volumes:
+  influxdb_data:
+  grafana_data:
+
+services:
+
+  simulator:
+    build: ./simulator
+    container_name: simulator
+    ports:
+      - "4840:4840"
+    networks:
+      - iiot_network
+    restart: "no"
+    depends_on:
+      - mosquitto
+
+  mosquitto:
+    image: eclipse-mosquitto:2.0
+    container_name: mosquitto
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - ./mosquitto/config/mosquitto.conf:/mosquitto/config/mosquitto.conf
+      - ./mosquitto/data:/mosquitto/data
+      - ./mosquitto/log:/mosquitto/log
+    networks:
+      - iiot_network
+    restart: unless-stopped
+
+  influxdb:
+    image: influxdb:2.7
+    container_name: influxdb
+    ports:
+      - "8086:8086"
+    volumes:
+      - influxdb_data:/var/lib/influxdb2
+    environment:
+      - DOCKER_INFLUXDB_INIT_MODE=setup
+      - DOCKER_INFLUXDB_INIT_USERNAME=${INFLUXDB_USERNAME}
+      - DOCKER_INFLUXDB_INIT_PASSWORD=${INFLUXDB_PASSWORD}
+      - DOCKER_INFLUXDB_INIT_ORG=${INFLUXDB_ORG}
+      - DOCKER_INFLUXDB_INIT_BUCKET=${INFLUXDB_BUCKET}
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=${INFLUXDB_TOKEN}
+    networks:
+      - iiot_network
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:10.4.0
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning
+    environment:
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD}
+    networks:
+      - iiot_network
+    depends_on:
+      - influxdb
+    restart: unless-stopped
+
+  nodered:
+    image: nodered/node-red:5.0.4
+    container_name: nodered
+    ports:
+      - "1880:1880"
+    volumes:
+      - ./nodered_data:/data
+    networks:
+      - iiot_network
+    depends_on:
+      - mosquitto
+      - influxdb
+    restart: unless-stopped
+
+  ml_service:
+    build:
+      context: ./ml_service
+      dockerfile: Dockerfile
+    container_name: ml_service
+    environment:
+      MQTT_HOST: mosquitto
+      MQTT_PORT: "1883"
+      INPUT_TOPIC: factory/pump01/state
+      OUTPUT_TOPIC: factory/pump01/ml_diagnostics
+      STATUS_TOPIC: factory/pump01/ml_status
+      ASSET_ID: ${ML_ASSET_ID:-Pump-01}
+      CALIBRATION_SAMPLES: "100"
+      WINDOW_SIZE: "15"
+      ANOMALY_CONFIRM_COUNT: "3"
+      WARNING_ANOMALY_INDEX: "0.65"
+      CRITICAL_ANOMALY_INDEX: "0.80"
+      IFOREST_ESTIMATORS: "300"
+      IFOREST_CONTAMINATION: "0.05"
+      RANDOM_STATE: "42"
+      LOG_LEVEL: INFO
+    networks:
+      - iiot_network
+    depends_on:
+      - mosquitto
+    restart: "no"
