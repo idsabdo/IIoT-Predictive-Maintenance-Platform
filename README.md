@@ -15,9 +15,8 @@ The system follows a production-style IIoT architecture using OPC UA for industr
 ---
 
 ## Architecture
-
-```
 ![IIoT Predictive Maintenance Platform Architecture](docs/the-architecture-diagram.png)
+```
 ┌──────────────────────────────────────────────────────────────────────┐
 │                         FIELD / EDGE LAYER                           │
 │                                                                      │
