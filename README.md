@@ -75,7 +75,8 @@ The system follows a production-style IIoT architecture using OPC UA for industr
 ```
 ## Dashboard
 
-![Grafana Condition Monitoring Dashboard](docs/Dashboard-working-mode.png)
+![Grafana Condition Monitoring Dashboard](docs/Dashboard-working-mode1.png)
+![Grafana Condition Monitoring Dashboard](docs/Dashboard-working-mode2.png)
 ---
 
 ## Tech Stack
